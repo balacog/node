@@ -6,29 +6,23 @@ pipeline {
                 sh "sudo npm install"
                 sh "sudo npm run build"
       }
+   
     }
-
-    stage('Upload to S3') {
-        steps{
-            script {
-
-                dir(''){
-
-                    pwd(); //Log current directory
-
-                    withAWS(region:'us-east-2',credentials:'18a9ad57-22ad-4d15-9dda-391bccb8fc13') {
-
-                        def identity=awsIdentity();//Log AWS credentials
-
-                        // Upload files from working directory '' in your project workspace
-                        s3Upload(bucket:"jenkins-pipeline-to-s3", workingDir:'', includePathPattern:'**/*');
-                        // invalidate S3 static-web-hosting
-                        cfInvalidate(distribution:'E152QNNVYS423', paths:['/*'])
-                    }
-
-                }
-            }
-        }
-    }
-
+    
+stages{
+      stage('deploy to S3'){
+          steps{
+              sh 'aws s3 cp public/index.html s3://<jenkins-pipeline-to-s3>'
+              sh 'aws s3api put-object-acl --bucket <jenkins-pipeline-to-s3> --key index.html --acl public-read'
+              sh 'aws s3 cp public/error.html s3://<jenkins-pipeline-to-s3>'
+              sh 'aws s3api put-object-acl --bucket <jenkins-pipeline-to-s3> --key index.html --acl public-read'
+          }
+      }
   }
+  }
+  
+                   
+
+                
+            
+
