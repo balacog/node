@@ -1,14 +1,10 @@
 pipeline {
-
-  agent any
-
-  stages {
-
-    stage('Checkout Source') {
-      steps {
-        git branch: "master",
-          // credentialsId: 'cfd6c76a-406c-4a8f-af8c-13d907ef0d4b',
-          url: 'git@github.com:spinningops/website-pipeline-demo.git'
+     agent any
+     stages {
+        stage("Build") {
+            steps {
+                sh "sudo npm install"
+                sh "sudo npm run build"
       }
     }
 
@@ -20,17 +16,17 @@ pipeline {
 
                     pwd(); //Log current directory
 
-                    withAWS(region:'us-east-1',credentials:'18a9ad57-22ad-4d15-9dda-391bccb8fc13') {
+                    withAWS(region:'us-east-2',credentials:'18a9ad57-22ad-4d15-9dda-391bccb8fc13') {
 
                         def identity=awsIdentity();//Log AWS credentials
 
                         // Upload files from working directory '' in your project workspace
-                        s3Upload(bucket:"website.spinningops.com", workingDir:'', includePathPattern:'**/*');
-                        // invalidate CloudFront distribution
+                        s3Upload(bucket:"jenkins-pipeline-to-s3", workingDir:'', includePathPattern:'**/*');
+                        // invalidate S3 static-web-hosting
                         cfInvalidate(distribution:'E152QNNVYS423', paths:['/*'])
                     }
 
-                };
+                }
             }
         }
     }
