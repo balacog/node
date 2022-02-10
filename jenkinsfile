@@ -1,26 +1,18 @@
 pipeline {
-     agent any
-     stages {
-        stage("Build") {
-            steps {
-                sh "sudo npm install"
-                sh "sudo npm run build"
-      }
-   
-    }
-    
-stages{
-      stage('deploy to S3'){
-          steps{
-              sh 'aws s3 cp public/index.html s3://<jenkins-pipeline-to-s3>'
-              sh 'aws s3api put-object-acl --bucket <jenkins-pipeline-to-s3> --key index.html --acl public-read'
-              sh 'aws s3 cp public/error.html s3://<jenkins-pipeline-to-s3>'
-              sh 'aws s3api put-object-acl --bucket <jenkins-pipeline-to-s3> --key index.html --acl public-read'
-          }
-      }
-  }
-  }
+  agent any
+  tools {nodejs "Node"}
   
+   stages {
+    stage('Build'){
+	  steps {
+	  git 'https://github.com/Pankaj0501/simple-node-js-reac.git'
+	  sh 'npm install'
+	  
+	  }
+	}
+   }
+     
+ }
                    
 
                 
