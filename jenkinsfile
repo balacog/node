@@ -1,20 +1,31 @@
 pipeline {
   agent any
-  tools {nodejs "Node"}
-  
-   stages {
-    stage('Build'){
-	  steps {
-	  git 'https://github.com/Pankaj0501/simple-node-js-reac.git'
-	  sh 'npm install'
-	  
-	  }
-	}
-   }
-     
- }
-                   
+  tools {
+    nodejs "Node"
+  }
 
-                
+  stages {
+
+    stage('Build') {
+      steps {
+        git 'https://github.com/Pankaj0501/simple-node-js-reac.git'
+        sh 'npm install'
+        sh 'npm run'
+        sh 'npm start'
+        sh 'npm run build'
+
+      }
+    }
+    stage('Upload') {
+      steps {
+        //   sh 'aws s3 cp /var/lib/jenkins/workspace/JOB1_pipeline/ s3://reactapprepo --recursive'               
+
+       }
+
+      }
+    }
+
+  }
+          
             
 
